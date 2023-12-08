@@ -11,14 +11,15 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static string UserName;
-    public static int HighScore = 0;
-    public static GameManager Instance;
-    public Text UsersName;
+    public string userName;
+    public string bestUser;
+    public int score = 0;
+    public int highScore = 0;
 
-    private void Start()
+    public static GameManager Instance;
+
+    private void Awake()
     {
-        UsersName.text = "Best Score: " + UserName + " : " + HighScore;
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -27,40 +28,20 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        LoadInfos();
-        UsersName.text = "Best Score: " + UserName + " : " + HighScore;
-    }
-
-    public void SubmitName(InputField input)
-    {
-        UserName = input.text;
-    }
-
-    public void StartGame()
-    {
-        SceneManager.LoadScene(1);
-    }
-
-    public void ExitGame()
-    {
-        SaveInfos();
-
-        Debug.Log("Saving Part Works");
     }
 
     [System.Serializable]
     class SaveData
     {
-        public string UserName;
+        public string bestUser;
         public int HighScore;
     }
 
     public void SaveInfos()
     {
         SaveData data = new SaveData();
-        data.UserName = UserName;
-        data.HighScore = HighScore;
+        data.bestUser = bestUser;
+        data.HighScore = highScore;
 
         string json = JsonUtility.ToJson(data);
 
@@ -76,8 +57,8 @@ public class GameManager : MonoBehaviour
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
-            UserName = data.UserName;
-            HighScore = data.HighScore;
+            bestUser = data.bestUser;
+            highScore = data.HighScore;
         }
     }
 }

@@ -11,6 +11,7 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text HighScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -22,7 +23,8 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ScoreText.text = "Best Score: " + GameManager.UserName + " : 0";
+        ScoreText.text = $"Your Score: {GameManager.Instance.userName} : {GameManager.Instance.score}";
+        HighScoreText.text = $"Your Score: {GameManager.Instance.bestUser} : {GameManager.Instance.highScore}";
 
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
@@ -57,10 +59,17 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
+            GameManager.Instance.SaveInfos();
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            }
+            } 
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToMenu();
         }
     }
 
@@ -74,9 +83,10 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
 
-        if(m_Points > GameManager.HighScore)
+        if(m_Points > GameManager.Instance.highScore)
         {
-            GameManager.HighScore = m_Points;
+            GameManager.Instance.highScore = m_Points;
+            GameManager.Instance.bestUser = GameManager.Instance.userName;
         }
 
         GameOverText.SetActive(true);
@@ -84,9 +94,10 @@ public class MainManager : MonoBehaviour
 
     public void ToMenu()
     {
-        if (m_Points > GameManager.HighScore)
+        if (m_Points > GameManager.Instance.highScore)
         {
-            GameManager.HighScore = m_Points;
+            GameManager.Instance.highScore = m_Points;
+            GameManager.Instance.bestUser = GameManager.Instance.userName;
         }
 
         SceneManager.LoadScene(0);
